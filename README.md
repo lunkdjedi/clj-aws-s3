@@ -24,7 +24,7 @@ Add the following dependency to your `project.clj` file:
 
 ;This is a fork of weavejester clj-aws-s3 that lets the aws-sdk resolve credentials.
 ;Therefore you do not need to manually create your credentials. 
-;You should be able to set via your environment variables or IAM role or in ~/.aws/credentials file. 
+
 
 (s3/create-bucket "my-bucket")
 
@@ -33,6 +33,17 @@ Add the following dependency to your `project.clj` file:
 (s3/update-object-acl "my-bucket" "some-key" (s3/grant :all-users :read))
 
 (println (slurp (:content (s3/get-object "my-bucket" "some-key"))))
+
+;You should be able to set via your environment variables or IAM role or in ~/.aws/credentials file.
+;In case you truly want to set the keys your self, initialize your s3client like so
+ 
+(s3-client :access-key "AAAAAA" :secret-key "SSSSSS")
+
+; or include an optional token
+(s3-client :access-key "AAAAAA" :secret-key "SSSSSS" :token "accesstoken")
+
+These should not be required when using IAM roles in amazon.
+
 ```
 
 ## Documentation
