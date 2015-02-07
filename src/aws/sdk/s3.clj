@@ -50,7 +50,7 @@
            java.nio.charset.Charset))
 
 (defn- s3-client*
-  [& {:keys [conn-timeout socket-timeout max-retries max-conns proxy-host proxy-port proxy-user proxy-domain proxy-workstation endpoint] :as options}]
+  [& {:keys [conn-timeout socket-timeout max-retries max-conns proxy-host proxy-port proxy-user proxy-domain proxy-workstation endpoint access-key secret-key token] :as options}]
   (let [client-configuration (ClientConfiguration.)]
     (when-let [conn-timeout (:conn-timeout options)]
       (.setConnectionTimeout client-configuration conn-timeout))
@@ -72,7 +72,16 @@
       (.setProxyDomain client-configuration proxy-domain))
     (when-let [proxy-workstation (:proxy-workstation options)]
       (.setProxyWorkstation client-configuration proxy-workstation))
-    (let [client (AmazonS3Client. client-configuration)]
+    (let [aws-creds
+          (cond
+            (and (contains? options :access-key) (contains? options :secret-key) (contains? options :token))
+            (BasicSessionCredentials. (:access-key options) (:secret-key options) (:token options))
+            (and (contains? options :access-key) (contains? options :secret-key))
+            (BasicAWSCredentials. (:access-key options) (:secret-key options)))
+          client 
+          (if (nil? aws-creds)
+            (AmazonS3Client. client-configuration)
+            (AmazonS3Client. aws-creds client-configuration))]
       (when-let [endpoint (:endpoint options)]
         (.setEndpoint client endpoint))
       client)))
