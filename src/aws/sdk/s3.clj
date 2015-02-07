@@ -60,17 +60,17 @@
       (.setMaxErrorRetry client-configuration max-retries))
     (when-let [max-conns (:max-conns options)]
       (.setMaxConnections client-configuration max-conns))
-    (when-let [proxy-host (get-in options [:proxy :host])]
+    (when-let [proxy-host (:proxy-host options)]
       (.setProxyHost client-configuration proxy-host))
-    (when-let [proxy-port (get-in options [:proxy :port])]
+    (when-let [proxy-port (:proxy-port options)]
       (.setProxyPort client-configuration proxy-port))
-    (when-let [proxy-user (get-in options [:proxy :user])]
+    (when-let [proxy-user (:proxy-user options)]
       (.setProxyUsername client-configuration proxy-user))
-    (when-let [proxy-pass (get-in options [:proxy :password])]
+    (when-let [proxy-pass (:proxy-password options)]
       (.setProxyPassword client-configuration proxy-pass))
-    (when-let [proxy-domain (get-in options [:proxy :domain])]
+    (when-let [proxy-domain (:proxy-domain options)]
       (.setProxyDomain client-configuration proxy-domain))
-    (when-let [proxy-workstation (get-in options [:proxy :workstation])]
+    (when-let [proxy-workstation (:proxy-workstation options)]
       (.setProxyWorkstation client-configuration proxy-workstation))
     (let [client (AmazonS3Client. client-configuration)]
       (when-let [endpoint (:endpoint options)]
