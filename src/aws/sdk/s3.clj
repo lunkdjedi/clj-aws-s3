@@ -11,7 +11,8 @@
   (:require [clojure.string :as str]
             [clj-time.core :as t]
             [clj-time.coerce :as coerce]
-            [clojure.walk :as walk])
+            [clojure.walk :as walk]
+            [clojure.core.memoize :as memoize])
   (:import com.amazonaws.auth.BasicAWSCredentials
            com.amazonaws.auth.BasicSessionCredentials
            com.amazonaws.services.s3.AmazonS3Client
@@ -88,7 +89,7 @@
 
 (def ^{:private true :tag AmazonS3Client}
   s3-client
-  (memoize s3-client*))
+  (memoize/ttl s3-client* :ttl/threshold (* 1000 60 5)))
 
 (defprotocol ^{:no-doc true} Mappable
   "Convert a value into a Clojure map."
