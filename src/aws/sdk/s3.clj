@@ -11,8 +11,7 @@
   (:require [clojure.string :as str]
             [clj-time.core :as t]
             [clj-time.coerce :as coerce]
-            [clojure.walk :as walk]
-            [clojure.core.memoize :as memoize])
+            [clojure.walk :as walk])
   (:import com.amazonaws.auth.BasicAWSCredentials
            com.amazonaws.auth.BasicSessionCredentials
            com.amazonaws.services.s3.AmazonS3Client
@@ -50,7 +49,7 @@
            java.io.InputStream
            java.nio.charset.Charset))
 
-(defn- s3-client*
+(defn s3-client
   [& {:keys [conn-timeout socket-timeout max-retries max-conns proxy-host proxy-port proxy-user proxy-domain proxy-workstation endpoint access-key secret-key token] :as options}]
   (let [client-configuration (ClientConfiguration.)]
     (when-let [conn-timeout (:conn-timeout options)]
@@ -86,10 +85,6 @@
       (when-let [endpoint (:endpoint options)]
         (.setEndpoint client endpoint))
       client)))
-
-(def ^{:private true :tag AmazonS3Client}
-  s3-client
-  (memoize/ttl s3-client* :ttl/threshold (* 1000 60 5)))
 
 (defprotocol ^{:no-doc true} Mappable
   "Convert a value into a Clojure map."
